@@ -94,7 +94,7 @@ local extraTab = Window:CreateTab({
 	ShowTitle = true
 })
 
--- FullBright Toggle
+-- Fullbright Toggle
 extraTab:CreateToggle({
 	Name = "FullBright",
 	Default = false,
@@ -157,12 +157,68 @@ extraTab:CreateToggle({
 	end
 })
 
+-- Air Weld Button
+extraTab:CreateButton({
+	Name = "Air Weld",
+	Callback = function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/NEWAIRWELD.github.io/refs/heads/main/weld.lua"))()
+	end
+})
+
+-- Hitbox Button
+extraTab:CreateButton({
+	Name = "Zombie/Bandit Hitbox",
+	Callback = function()
+		local function CreateHitboxForEnemy(model)
+			if not model:FindFirstChild("HumanoidRootPart") then return end
+
+			local hitbox = Instance.new("Part")
+			hitbox.Size = Vector3.new(20, 20, 20)
+			hitbox.Transparency = 0.5
+			hitbox.Color = Color3.fromRGB(0, 0, 255)
+			hitbox.Material = Enum.Material.Neon
+			hitbox.Anchored = true
+			hitbox.CanCollide = false
+			hitbox.Name = "EnemyHitbox"
+			hitbox.Parent = model
+
+			game:GetService("RunService").Heartbeat:Connect(function()
+				if model and model:FindFirstChild("HumanoidRootPart") then
+					hitbox.CFrame = model.HumanoidRootPart.CFrame
+				end
+			end)
+		end
+
+		local allowedNames = {
+			["Model_Walker"] = true,
+			["Model_Runner"] = true,
+			["Model_Banker"] = true,
+			["ZombieSheriff"] = true,
+			["Outlaw"] = true
+		}
+
+		for _, obj in pairs(workspace:GetDescendants()) do
+			if obj:IsA("Model") and allowedNames[obj.Name] then
+				CreateHitboxForEnemy(obj)
+			end
+		end
+
+		workspace.DescendantAdded:Connect(function(obj)
+			if obj:IsA("Model") and allowedNames[obj.Name] then
+				task.wait(0.5)
+				CreateHitboxForEnemy(obj)
+			end
+		end)
+	end
+})
+
 -- Noclip Toggle
 extraTab:CreateToggle({
 	Name = "Noclip",
 	Default = false,
 	Callback = function(state)
 		local Plr = game:GetService("Players").LocalPlayer
+
 		if state then
 			_G.NoclipRunning = true
 			_G.NoclipConnection = game:GetService("RunService").Stepped:Connect(function()
@@ -182,15 +238,33 @@ extraTab:CreateToggle({
 	end
 })
 
--- Air Werling Button
-extraTab:CreateButton({
-	Name = "Air Werling",
-	Callback = function()
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/NEWAIRWELD.github.io/refs/heads/main/weld.lua"))()
+-- Instant Interact Toggle
+extraTab:CreateToggle({
+	Name = "Instant Interact",
+	Default = false,
+	Callback = function(state)
+		if state then
+			_G.InstantInteractConnection1 = workspace.DescendantAdded:Connect(function(descendant)
+				if descendant:IsA("ProximityPrompt") then
+					descendant.HoldDuration = 0
+				end
+			end)
+
+			for _, prompt in pairs(workspace:GetDescendants()) do
+				if prompt:IsA("ProximityPrompt") then
+					prompt.HoldDuration = 0
+				end
+			end
+		else
+			if _G.InstantInteractConnection1 then
+				_G.InstantInteractConnection1:Disconnect()
+				_G.InstantInteractConnection1 = nil
+			end
+		end
 	end
 })
 
--- Credits Tab (Always at the end)
+-- Credits Tab
 local creditsTab = Window:CreateTab({
 	Name = "Credits",
 	Icon = "info",
