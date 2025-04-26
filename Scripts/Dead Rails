@@ -94,6 +94,7 @@ local extraTab = Window:CreateTab({
 	ShowTitle = true
 })
 
+-- FullBright Toggle
 extraTab:CreateToggle({
 	Name = "FullBright",
 	Default = false,
@@ -162,17 +163,12 @@ extraTab:CreateToggle({
 	Default = false,
 	Callback = function(state)
 		local Plr = game:GetService("Players").LocalPlayer
-		local RunService = game:GetService("RunService")
-
 		if state then
 			_G.NoclipRunning = true
-			_G.NoclipConnection = RunService.Stepped:Connect(function()
-				local character = Plr.Character
-				if character then
-					for _, part in pairs(character:GetDescendants()) do
-						if part:IsA("BasePart") and _G.NoclipRunning then
-							part.CanCollide = false
-						end
+			_G.NoclipConnection = game:GetService("RunService").Stepped:Connect(function()
+				for _, v in pairs(Plr.Character:GetDescendants()) do
+					if v:IsA("BasePart") and _G.NoclipRunning then
+						v.CanCollide = false
 					end
 				end
 			end)
@@ -183,6 +179,14 @@ extraTab:CreateToggle({
 				_G.NoclipConnection = nil
 			end
 		end
+	end
+})
+
+-- Air Werling Button
+extraTab:CreateButton({
+	Name = "Air Werling",
+	Callback = function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/NEWAIRWELD.github.io/refs/heads/main/weld.lua"))()
 	end
 })
 
