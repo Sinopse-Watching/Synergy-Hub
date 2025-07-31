@@ -114,12 +114,10 @@ local function ScrollingFrame()
 	local NewScrollingFrame = Instance.new("ScrollingFrame")
 	NewScrollingFrame.BackgroundTransparency = 1
 	NewScrollingFrame.BorderSizePixel = 0
-	NewScrollingFrame.ZIndex = Level
-	NewScrollingFrame.ScrollingEnabled = true
 	NewScrollingFrame.ScrollBarThickness = 6
 	NewScrollingFrame.ScrollingDirection = Enum.ScrollingDirection.Y
-	NewScrollingFrame.VerticalScrollBarInset = Enum.ScrollBarInset.None
 	NewScrollingFrame.ClipsDescendants = true
+	NewScrollingFrame.ZIndex = Level
 	return NewScrollingFrame
 end
 
@@ -350,8 +348,9 @@ end)
 		DisplayList.Padding = UDim.new(0,5)
 		DisplayList.Parent = DisplayPage
 		
-		DisplayList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-	DisplayPage.CanvasSize = UDim2.new(0, 0, 0, DisplayList.AbsoluteContentSize.Y + 10)
+	DisplayList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+	local Y1 = DisplayList.AbsoluteContentSize.Y
+	DisplayPage.CanvasSize = UDim2.new(0, 0, 0, Y1 + 10)
 end)
 		
 		local DisplayPadding = Instance.new("UIPadding")
