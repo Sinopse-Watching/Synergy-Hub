@@ -1,5 +1,4 @@
-
--- local Player = game.Players.LocalPlayer
+local Player = game.Players.LocalPlayer
 local Mouse = Player:GetMouse()
 
 local TweenService = game:GetService("TweenService")
@@ -256,11 +255,6 @@ function UILibrary.Load(GUITitle)
 	local dragging = false
 local dragInput, dragStart, startPos
 
-local function update(input)
-	local delta = input.Position - dragStart
-	ContainerFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-end
-
 TitleButton.InputBegan:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 		dragging = true
@@ -283,7 +277,11 @@ end)
 
 UserInputService.InputChanged:Connect(function(input)
 	if input == dragInput and dragging then
-		update(input)
+		local delta = input.Position - dragStart
+		ContainerFrame.Position = UDim2.new(
+			startPos.X.Scale, startPos.X.Offset + delta.X,
+			startPos.Y.Scale, startPos.Y.Offset + delta.Y
+		)
 	end
 end)
 	
